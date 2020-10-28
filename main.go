@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/davidleitw/leetcodeBOT/model"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -19,6 +20,8 @@ func init() {
 var disToken string
 
 func main() {
+	model.CreateLeetCodeProblemsTable()
+
 	if disToken == "" {
 		log.Println("No token provided. Please check your discord bot token.")
 		return
@@ -57,10 +60,14 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 }
 
 func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
-	fmt.Println(msg.ChannelID)
-	fmt.Println(msg.Author)
+	log.Printf("%s: %s\n", msg.Author, msg.Content)
 
 	if msg.Author.ID == dis.State.User.ID {
+		return
+	}
+
+	if msg.GuildID == "" {
+		log.Println("不是群組")
 		return
 	}
 
@@ -68,13 +75,13 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	switch msg.Content {
 	case "ping":
-		dis.ChannelMessageSend(msg.ChannelID, "Pong!")
+		_, _ = dis.ChannelMessageSend(msg.ChannelID, "Pong!")
 	case "pong":
-		dis.ChannelMessageSend(msg.ChannelID, "Ping!")
+		_, _ = dis.ChannelMessageSend(msg.ChannelID, "Ping!")
 	case "test":
-		dis.ChannelMessageSend(msg.ChannelID, fullID+"  ㄐㄐ")
+		_, _ = dis.ChannelMessageSend(msg.ChannelID, fullID+"  ㄐㄐ")
 	default:
-		dis.ChannelMessageSend(msg.ChannelID, msg.Member.Nick)
+		// _, _ = dis.ChannelMessageSend(msg.ChannelID, msg.Member.Nick)
 	}
 
 }

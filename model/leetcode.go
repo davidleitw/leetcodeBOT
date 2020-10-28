@@ -11,12 +11,13 @@ const leetcodeURL = "https://leetcode.com/problems/"
 
 // leetcode api data struct
 type LeetCode struct {
-	UserName        string `json:"user_name"`
-	NumSolved       int    `json:"num_solved"`
-	NumTotal        int    `json:"num_total"`
-	AcEasy          int    `json:"ac_easy"`
-	AcMedium        int    `json:"ac_medium"`
-	AcHard          int    `json:"ac_hard"`
+	UserName  string `json:"user_name"`
+	NumSolved int    `json:"num_solved"`
+	NumTotal  int    `json:"num_total"`
+	AcEasy    int    `json:"ac_easy"`
+	AcMedium  int    `json:"ac_medium"`
+	AcHard    int    `json:"ac_hard"`
+
 	StatStatusPairs []struct {
 		Stat struct {
 			QuestionID          int         `json:"question_id"`
@@ -30,10 +31,13 @@ type LeetCode struct {
 			FrontendQuestionID  int         `json:"frontend_question_id"`
 			IsNewQuestion       bool        `json:"is_new_question"`
 		} `json:"stat"`
-		Status     interface{} `json:"status"` //
+
+		Status interface{} `json:"status"` //
+
 		Difficulty struct {
 			Level int `json:"level"`
 		} `json:"difficulty"`
+
 		PaidOnly  bool `json:"paid_only"`
 		IsFavor   bool `json:"is_favor"`
 		Frequency int  `json:"frequency"`
@@ -49,6 +53,7 @@ type Problem struct {
 	PaidOnly     bool
 	Submit       int
 	Accept       int
+	Solved       bool
 }
 
 func CreateLeetCodeProblemsTable() {
@@ -88,7 +93,7 @@ func AddLeetCodeProblem(problem *Problem) {
 }
 
 func SearchWithID(ID int) (*Problem, error) {
-	if ID <= 0 || ID >= 2500 {
+	if ID <= 0 {
 		return nil, errors.New("ID有誤， 請確認輸入是否正確.")
 	}
 
@@ -97,4 +102,40 @@ func SearchWithID(ID int) (*Problem, error) {
 
 func SearchWithTitle(title string) (*Problem, error) {
 	return &Problem{}, nil
+}
+
+func SearchWithIDTest(ID int) (*Problem, error) {
+	res, err := http.Get("https://leetcode.com/api/problems/algorithms/")
+	if err != nil {
+		log.Println("http get leetcode api data failed.")
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	var leetcodeAPIData LeetCode
+	decoder := json.NewDecoder(res.Body)
+	err = decoder.Decode(&leetcodeAPIData)
+	if err != nil {
+		log.Println("decoder leetcode api data failed.")
+		return nil, err
+	}
+
+	if ID <= 0 || ID > len(leetcodeAPIData.StatStatusPairs) {
+		return nil, errors.New("ID有誤， 請確認輸入是否正確.")
+	}
+
+	for _, problem := range leetcodeAPIData.StatStatusPairs {
+		if problem.Stat.QuestionID == ID {
+			return &Problem{
+				ProblemID:    problem.Stat.QuestionID,
+				ProblemTitle: problem.Stat.QuestionTitle,
+				ProblemURL:   leetcodeURL + problem.Stat.QuestionTitleSlug,
+				Difficulty:   problem.Difficulty.Level,
+				PaidOnly:     problem.PaidOnly,
+				Submit:       problem.Stat.TotalSubmitted,
+				Accept:       problem.Stat.TotalAcs,
+			}, nil
+		}
+	}
+	return nil, nil
 }

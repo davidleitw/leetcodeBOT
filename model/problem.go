@@ -83,7 +83,6 @@ func CreateLeetCodeProblemsTable() {
 			Submit:       problem.Stat.TotalSubmitted,
 			Accept:       problem.Stat.TotalAcs,
 		}
-		log.Println(p)
 		AddLeetCodeProblem(p)
 	}
 }

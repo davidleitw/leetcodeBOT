@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/davidleitw/leetcodeBOT/leetcode"
 	"github.com/davidleitw/leetcodeBOT/model"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -68,7 +69,7 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 
 	// 用戶暱稱
-	fullID := msg.Author.Username + "#" + msg.Author.Discriminator
+	// fullID := msg.Author.Username + "#" + msg.Author.Discriminator
 	prefix := msg.Content[:1]
 	log.Println("prefix = ", prefix)
 
@@ -78,47 +79,18 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 	case msg.Content == "pong":
 		_, _ = dis.ChannelMessageSend(msg.ChannelID, "Ping!")
 	case msg.Content == "test":
-		//_, _ = dis.ChannelMessageSend(msg.ChannelID, fullID+"  ㄐㄐ")
-		_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, &discordgo.MessageEmbed{
-			Color: 0xFFD700,
-			Type:  discordgo.EmbedTypeRich,
-			Author: &discordgo.MessageEmbedAuthor{
-				URL:     "https://home.gamer.com.tw/homeindex.php?owner=bahamut000",
-				Name:    "薯條醬",
-				IconURL: "https://cdn.icon-icons.com/icons2/2389/PNG/512/leetcode_logo_icon_145113.png",
-			},
-			Fields: []*discordgo.MessageEmbedField{
-				{
-					Name:   fullID,
-					Value:  "test embed message1",
-					Inline: false,
-				},
-				{
-					Name:   fullID,
-					Value:  "test embed message2",
-					Inline: true,
-				},
-				{
-					Name:   "48",
-					Value:  "763",
-					Inline: true,
-				},
-				{
-					Name:   "4848",
-					Value:  "763763",
-					Inline: false,
-				},
-				{
-					Name:   "48481",
-					Value:  "7631763",
-					Inline: false,
-				},
-			},
-			Footer: &discordgo.MessageEmbedFooter{
-				Text:    "一起刷leetcode 一起進步 (･ω´･ )",
-				IconURL: "https://imgur.com/DhY5fKW",
-			},
-		})
+		var problems []*model.Problem
+		_48, _ := model.SearchWithIDTest(48)
+		_763, _ := model.SearchWithIDTest(763)
+		problems = append(problems, _48)
+		problems = append(problems, _763)
+
+		ps := leetcode.ProblemEmbedMessage(problems)
+		_, err := dis.ChannelMessageSendEmbed(msg.ChannelID, ps)
+		if err != nil {
+			log.Println("err = ", err)
+		}
+
 	case prefix == "!":
 		command := msg.Content[1:]
 		log.Println("In command area, command = ", command)

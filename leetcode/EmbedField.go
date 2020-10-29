@@ -2,6 +2,8 @@ package leetcode
 
 import (
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/davidleitw/leetcodeBOT/model"
@@ -12,7 +14,7 @@ const color int = 0xFFD700
 var author *discordgo.MessageEmbedAuthor = &discordgo.MessageEmbedAuthor{
 	URL:     "https://github.com/davidleitw/leetcodeBOT",
 	Name:    "薯條醬",
-	IconURL: "https://www.flaticon.com/svg/static/icons/svg/25/25231.svg",
+	IconURL: "https://img.icons8.com/doodle/2x/github.png",
 }
 
 var footer *discordgo.MessageEmbedFooter = &discordgo.MessageEmbedFooter{
@@ -37,6 +39,7 @@ func baseEmbedMessage() *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		Color:  color,
 		Author: author,
+		Footer: footer,
 	}
 }
 
@@ -46,33 +49,29 @@ func ProblemEmbedMessage(problems []*model.Problem) *discordgo.MessageEmbed {
 
 	for _, problem := range problems {
 		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "----------",
+			Name:   "Problem",
 			Value:  fmt.Sprintf("No.%d\n", problem.ProblemID),
 			Inline: false,
 		})
 		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Title",
+			Name:   "Title: ",
 			Value:  problem.ProblemTitle,
-			Inline: false,
+			Inline: true,
 		})
 		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "URL",
+			Name:   "URL: ",
 			Value:  problem.ProblemURL,
-			Inline: false,
+			Inline: true,
 		})
 		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Difficulty",
+			Name:   "Difficulty: ",
 			Value:  difficulty(problem.Difficulty),
-			Inline: false,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "----------",
-			Value:  "          ",
-			Inline: false,
+			Inline: true,
 		})
 	}
 
 	msg.Fields = fields
-	msg.Footer = footer
+	msg.Timestamp = time.Now().Format("2006-0102 15:04")
+	log.Println(msg.Timestamp)
 	return msg
 }

@@ -1,8 +1,7 @@
-package leetcode
+package bot
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -18,7 +17,7 @@ var author *discordgo.MessageEmbedAuthor = &discordgo.MessageEmbedAuthor{
 }
 
 var footer *discordgo.MessageEmbedFooter = &discordgo.MessageEmbedFooter{
-	Text:    "一起刷leetcode 一起進步 (･ω´･ )",
+	Text:    "  一起刷leetcode 一起進步 (･ω´･ )",
 	IconURL: "https://cdn.icon-icons.com/icons2/2389/PNG/512/leetcode_logo_icon_145113.png",
 }
 
@@ -31,8 +30,21 @@ func difficulty(d int) string {
 	case 3:
 		return "hard"
 	default:
-		return "nil"
+		return "Difficulty error"
 	}
+}
+
+func userEmbedMessage() *discordgo.MessageEmbed {
+	return &discordgo.MessageEmbed{
+		Color:  color,
+		Footer: footer,
+	}
+}
+
+func UserProblemsEmbedMessage(UserID string, problems []*model.Problem) *discordgo.MessageEmbed {
+	msg := userEmbedMessage()
+
+	return msg
 }
 
 func baseEmbedMessage() *discordgo.MessageEmbed {
@@ -43,7 +55,7 @@ func baseEmbedMessage() *discordgo.MessageEmbed {
 	}
 }
 
-func ProblemEmbedMessage(problems []*model.Problem) *discordgo.MessageEmbed {
+func ProblemsEmbedMessage(problems []*model.Problem) *discordgo.MessageEmbed {
 	msg := baseEmbedMessage()
 	fields := []*discordgo.MessageEmbedField{}
 
@@ -72,6 +84,5 @@ func ProblemEmbedMessage(problems []*model.Problem) *discordgo.MessageEmbed {
 
 	msg.Fields = fields
 	msg.Timestamp = time.Now().Format("2006-0102 15:04")
-	log.Println(msg.Timestamp)
 	return msg
 }

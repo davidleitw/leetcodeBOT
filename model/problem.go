@@ -91,7 +91,7 @@ func AddLeetCodeProblem(problem *Problem) {
 
 }
 
-func SearchWithID(ID int) (*Problem, error) {
+func SearchWithProblemID(ID int) (*Problem, error) {
 	if ID <= 0 {
 		return nil, errors.New("ID有誤， 請確認輸入是否正確.")
 	}
@@ -99,11 +99,11 @@ func SearchWithID(ID int) (*Problem, error) {
 	return &Problem{}, nil
 }
 
-func SearchWithTitle(title string) (*Problem, error) {
+func SearchWithProblemTitle(title string) (*Problem, error) {
 	return &Problem{}, nil
 }
 
-func SearchWithIDTest(ID int) (*Problem, error) {
+func SearchWithProblemIDTest(ID int) (*Problem, error) {
 	res, err := http.Get("https://leetcode.com/api/problems/algorithms/")
 	if err != nil {
 		log.Println("http get leetcode api data failed.")

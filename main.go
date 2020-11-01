@@ -5,13 +5,11 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"regexp"
-	"strconv"
 	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/davidleitw/leetcodeBOT/leetcode"
+	"github.com/davidleitw/leetcodeBOT/bot"
 	"github.com/davidleitw/leetcodeBOT/model"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -62,55 +60,32 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 }
 
 func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
-	log.Printf("%s: %s\n", msg.Author, msg.Content)
-
-	if (msg.Author.ID == dis.State.User.ID) || msg.GuildID == "" {
+	log.Println(msg.Author.ID, ": ", msg.Content)
+	if (msg.Author.ID == dis.State.User.ID) || msg.GuildID == "" || msg.Author.ID == "235088799074484224" {
 		return
 	}
 
 	// 用戶暱稱
 	// fullID := msg.Author.Username + "#" + msg.Author.Discriminator
-	prefix := msg.Content[:1]
-	log.Println("prefix = ", prefix)
 
 	switch {
+	case strings.Contains(msg.Content, "ㄐㄐ"):
+		_, _ = dis.ChannelMessageSend(msg.ChannelID, "ㄐㄐ")
 	case msg.Content == "ping":
 		_, _ = dis.ChannelMessageSend(msg.ChannelID, "Pong!")
 	case msg.Content == "pong":
 		_, _ = dis.ChannelMessageSend(msg.ChannelID, "Ping!")
 	case msg.Content == "test":
 		var problems []*model.Problem
-		_48, _ := model.SearchWithIDTest(48)
-		_763, _ := model.SearchWithIDTest(763)
+		_48, _ := model.SearchWithProblemIDTest(48)
+		_763, _ := model.SearchWithProblemIDTest(763)
 		problems = append(problems, _48)
 		problems = append(problems, _763)
 
-		ps := leetcode.ProblemEmbedMessage(problems)
+		ps := bot.ProblemsEmbedMessage(problems)
 		_, err := dis.ChannelMessageSendEmbed(msg.ChannelID, ps)
 		if err != nil {
 			log.Println("err = ", err)
-		}
-
-	case prefix == "!":
-		command := msg.Content[1:]
-		log.Println("In command area, command = ", command)
-		problem := regexp.MustCompile("^problem")
-		switch {
-		case problem.MatchString(command):
-			field := strings.Fields(command)
-
-			num, err := strconv.Atoi(field[1])
-			if err != nil {
-				_, _ = dis.ChannelMessageSend(msg.ChannelID, "Please input a problem number.")
-				return
-			}
-
-			p, err := model.SearchWithIDTest(num)
-			if err != nil {
-				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
-				return
-			}
-			_, _ = dis.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("%d: %s => %s\n", p.ProblemID, p.ProblemTitle, p.ProblemURL))
 		}
 	}
 

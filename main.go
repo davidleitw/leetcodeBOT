@@ -16,13 +16,11 @@ import (
 
 func init() {
 	disToken = os.Getenv("DISCORD_TOKEN")
-	log.Println(disToken)
 }
 
 var disToken string
 
 func main() {
-	// model.CreateLeetCodeProblemsTable()
 	if disToken == "" {
 		log.Println("No token provided. Please check your discord bot token.")
 		return
@@ -61,10 +59,10 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 
 func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 	log.Println(msg.Author.ID, ": ", msg.Content)
-	if (msg.Author.ID == dis.State.User.ID) || msg.GuildID == "" || msg.Author.ID == "235088799074484224" {
+	log.Println("msg = ", msg.Content, ", len of msg is ", len(msg.Content))
+	if (msg.Author.ID == dis.State.User.ID) || msg.GuildID == "" || msg.Author.ID == "235088799074484224" || len(msg.Content) == 0 {
 		return
 	}
-
 	// 用戶暱稱
 	// fullID := msg.Author.Username + "#" + msg.Author.Discriminator
 

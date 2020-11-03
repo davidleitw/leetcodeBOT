@@ -55,7 +55,7 @@ func baseEmbedMessage() *discordgo.MessageEmbed {
 	}
 }
 
-func ProblemsEmbedMessage(problems []*model.Problem) *discordgo.MessageEmbed {
+func ProblemsMsg(problems []*model.Problem) *discordgo.MessageEmbed {
 	msg := baseEmbedMessage()
 	fields := []*discordgo.MessageEmbedField{}
 
@@ -78,6 +78,48 @@ func ProblemsEmbedMessage(problems []*model.Problem) *discordgo.MessageEmbed {
 		fields = append(fields, &discordgo.MessageEmbedField{
 			Name:   "Difficulty: ",
 			Value:  difficulty(problem.Difficulty),
+			Inline: true,
+		})
+	}
+
+	msg.Fields = fields
+	msg.Timestamp = time.Now().Format("2006-0102 15:04")
+	return msg
+}
+
+func ProblemsDetailMsg(problems []*model.Problem) *discordgo.MessageEmbed {
+	msg := baseEmbedMessage()
+	fields := []*discordgo.MessageEmbedField{}
+
+	for _, problem := range problems {
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "Problem",
+			Value:  fmt.Sprintf("No.%d\n", problem.ProblemID),
+			Inline: false,
+		})
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "Title: ",
+			Value:  problem.ProblemTitle,
+			Inline: true,
+		})
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "URL: ",
+			Value:  problem.ProblemURL,
+			Inline: true,
+		})
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "Difficulty: ",
+			Value:  difficulty(problem.Difficulty),
+			Inline: true,
+		})
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "Ac",
+			Value:  fmt.Sprintf("%d\n", problem.Accept),
+			Inline: true,
+		})
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "Submit",
+			Value:  fmt.Sprintf("%d\n", problem.Submit),
 			Inline: true,
 		})
 	}

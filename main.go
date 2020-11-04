@@ -60,7 +60,7 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 	log.Println(msg.Author.ID, ": ", msg.Content)
 	log.Println("msg = ", msg.Content, ", len of msg is ", len(msg.Content))
-	if (msg.Author.ID == dis.State.User.ID) || msg.GuildID == "" || msg.Author.ID == "235088799074484224" || len(msg.Content) == 0 {
+	if (msg.Author.ID == dis.State.User.ID) || msg.GuildID == "" || msg.Author.Bot || len(msg.Content) == 0 {
 		return
 	}
 
@@ -116,10 +116,12 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 				_, _ = dis.ChannelMessageSend(msg.ChannelID, "message error, please check help message(--help, -h)")
 			}
 		case "--help", "-h", "help":
-			_, _ = dis.ChannelMessageSend(msg.ChannelID, "help message area.")
+			help := bot.HelpMsg()
+			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
 
 		case "ls":
 		case "add":
+
 		case "set":
 		case "rm", "del":
 		case "draw", "Draw", "抽":

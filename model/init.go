@@ -24,4 +24,7 @@ func init() {
 
 func migrate() {
 	_ = DB.AutoMigrate(&Problem{})
+	_ = DB.AutoMigrate(&User{})
+	_ = DB.AutoMigrate(&Report{})
+	_ = DB.AutoMigrate(&StudyGroup{})
 }

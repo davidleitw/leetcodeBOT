@@ -43,7 +43,8 @@ type LeetCode struct {
 }
 
 func CreateLeetCodeProblemsTable() {
-	res, err := http.Get("https://leetcode.com/api/problems/algorithms/")
+	//res, err := http.Get("https://leetcode.com/api/problems/algorithms/")
+	res, err := http.Get("https://leetcode.com/api/problems/all/")
 	if err != nil {
 		log.Println("http get leetcode api data failed.")
 		panic(err)
@@ -61,7 +62,7 @@ func CreateLeetCodeProblemsTable() {
 	log.Println(len(leetcodeAPIData.StatStatusPairs))
 	for _, problem := range leetcodeAPIData.StatStatusPairs {
 		p := &Problem{
-			ProblemID:    problem.Stat.QuestionID,
+			ProblemID:    problem.Stat.FrontendQuestionID,
 			ProblemTitle: problem.Stat.QuestionTitle,
 			ProblemURL:   leetcodeURL + problem.Stat.QuestionTitleSlug,
 			Difficulty:   problem.Difficulty.Level,
@@ -69,6 +70,7 @@ func CreateLeetCodeProblemsTable() {
 			Submit:       problem.Stat.TotalSubmitted,
 			Accept:       problem.Stat.TotalAcs,
 		}
+		log.Println("Problem ID = ", p.ProblemID, ", Title = ", p.ProblemTitle)
 		AddLeetCodeProblem(p)
 	}
 }

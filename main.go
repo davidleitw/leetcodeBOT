@@ -5,14 +5,11 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strconv"
 	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/davidleitw/leetcodeBOT/bot"
-	"github.com/davidleitw/leetcodeBOT/leetcode"
-	"github.com/davidleitw/leetcodeBOT/model"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -64,6 +61,7 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 
+	// log.Println(msg.Member.Nick) 暱稱
 	if strings.Contains(msg.Content, "ㄐㄐ") {
 		_, _ = dis.ChannelMessageSend(msg.ChannelID, "ㄐㄐ")
 		return
@@ -74,58 +72,38 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 		cmd := strings.Split(msg.Content, " ")[1:]
 		switch cmd[0] {
 		case "search":
-			if cmd[1] != "-d" && len(cmd) == 2 {
-				problemID, err := strconv.Atoi(cmd[1])
-				if err != nil {
-					_, _ = dis.ChannelMessageSend(msg.ChannelID, "請輸入數字，以便於查詢題目。")
-					return
-				}
-
-				problem, err := leetcode.SearchProblemWithID(problemID)
-				if err != nil {
-					_, _ = dis.ChannelMessageSend(msg.ChannelID, "資料庫內查無資料，請確認problem ID是否正確。")
-					return
-				}
-
-				msgs := bot.ProblemsMsg([]*model.Problem{problem})
-				_, err = dis.ChannelMessageSendEmbed(msg.ChannelID, msgs)
-				if err != nil {
-					log.Println("err = ", err)
-					return
-				}
-
-			} else if (cmd[1] == "-d" || cmd[1] == "--detail") && len(cmd) == 3 {
-				problemID, err := strconv.Atoi(cmd[2])
-				if err != nil {
-					_, _ = dis.ChannelMessageSend(msg.ChannelID, "請輸入數字，以便於查詢題目。")
-					return
-				}
-
-				problem, err := leetcode.SearchProblemWithID(problemID)
-				if err != nil {
-					_, _ = dis.ChannelMessageSend(msg.ChannelID, "資料庫內查無資料，請確認problem ID是否正確。")
-					return
-				}
-				msgs := bot.ProblemsDetailMsg([]*model.Problem{problem})
-				_, err = dis.ChannelMessageSendEmbed(msg.ChannelID, msgs)
-				if err != nil {
-					log.Println("err = ", err)
-					return
-				}
-			} else {
-				_, _ = dis.ChannelMessageSend(msg.ChannelID, "message error, please check help message(--help, -h)")
+			message, err := bot.Search(cmd)
+			if err != nil {
+				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+				return
 			}
+			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+
 		case "--help", "-h", "help":
 			help := bot.HelpMsg()
 			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
 
 		case "ls":
 		case "add":
+			message, err := bot.Add(msg, cmd)
+			if err != nil {
+				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+				return
+			}
+			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
 
 		case "set":
+			message, err := bot.Set(msg.GuildID, cmd)
+			if err != nil {
+				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+				return
+			}
+			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
 		case "rm", "del":
 		case "draw", "Draw", "抽":
+		case "next", "Next", "n":
 
+		case "study_group":
 		default:
 			_, _ = dis.ChannelMessageSend(msg.ChannelID, "message error, please check help message(--help, -h)")
 			return

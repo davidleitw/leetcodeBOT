@@ -8,6 +8,8 @@ import (
 	"github.com/davidleitw/leetcodeBOT/model"
 )
 
+// return message template function in this file.
+
 const color int = 0xFFD700
 
 var author *discordgo.MessageEmbedAuthor = &discordgo.MessageEmbedAuthor{
@@ -34,19 +36,6 @@ func difficulty(d int) string {
 	}
 }
 
-func userEmbedMessage() *discordgo.MessageEmbed {
-	return &discordgo.MessageEmbed{
-		Color:  color,
-		Footer: footer,
-	}
-}
-
-func UserProblemsEmbedMessage(UserID string, problems []*model.Problem) *discordgo.MessageEmbed {
-	msg := userEmbedMessage()
-
-	return msg
-}
-
 func baseEmbedMessage() *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		Color:  color,
@@ -55,7 +44,42 @@ func baseEmbedMessage() *discordgo.MessageEmbed {
 	}
 }
 
-func ProblemsMsg(problems []*model.Problem) *discordgo.MessageEmbed {
+func AddReportMessage(problems []*model.Problem, nike string, month, day int) *discordgo.MessageEmbed {
+	msg := baseEmbedMessage()
+	fields := []*discordgo.MessageEmbedField{}
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   fmt.Sprintf("%s成功添加了以下題目:", nike),
+		Value:  "--------------------",
+		Inline: false,
+	})
+
+	for _, problem := range problems {
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "Problem",
+			Value:  fmt.Sprintf("No.%d\n", problem.ProblemID),
+			Inline: true,
+		})
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "Title: ",
+			Value:  problem.ProblemTitle,
+			Inline: true,
+		})
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "Difficulty: ",
+			Value:  difficulty(problem.Difficulty),
+			Inline: true,
+		})
+	}
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "--------------------",
+		Value:  fmt.Sprintf("讀書會舉辦日期: %d月%d日", month, day),
+		Inline: false,
+	})
+	msg.Fields = fields
+	return msg
+}
+
+func SearchProblemsMsg(problems []*model.Problem) *discordgo.MessageEmbed {
 	msg := baseEmbedMessage()
 	fields := []*discordgo.MessageEmbedField{}
 
@@ -87,7 +111,7 @@ func ProblemsMsg(problems []*model.Problem) *discordgo.MessageEmbed {
 	return msg
 }
 
-func ProblemsDetailMsg(problems []*model.Problem) *discordgo.MessageEmbed {
+func SearchProblemsDetailMsg(problems []*model.Problem) *discordgo.MessageEmbed {
 	msg := baseEmbedMessage()
 	fields := []*discordgo.MessageEmbedField{}
 
@@ -127,4 +151,17 @@ func ProblemsDetailMsg(problems []*model.Problem) *discordgo.MessageEmbed {
 	msg.Fields = fields
 	msg.Timestamp = time.Now().Format("2006-0102 15:04")
 	return msg
+}
+
+func HelpMsg() *discordgo.MessageEmbed {
+	return &discordgo.MessageEmbed{
+		Color:  color,
+		Author: author,
+		Fields: []*discordgo.MessageEmbedField{
+			&discordgo.MessageEmbedField{
+				Name:  "指令使用方法",
+				Value: "https://hackmd.io/5nBbJrxrTrGTO1WOraXtaQ",
+			},
+		},
+	}
 }

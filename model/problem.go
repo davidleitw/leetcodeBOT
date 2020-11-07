@@ -19,6 +19,12 @@ type Problem struct {
 	Accept       int
 }
 
+// err != nil 代表題目存在
+func VerifyProblem(ProblemID int) bool {
+	err := DB.Where("problem_id = ?", ProblemID).First(&Problem{}).Error
+	return err == nil
+}
+
 func SearchWithProblemID(ID int) (*Problem, error) {
 	if ID <= 0 {
 		return nil, errors.New("ID有誤， 請確認輸入是否正確.")

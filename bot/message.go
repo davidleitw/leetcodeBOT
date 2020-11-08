@@ -6,6 +6,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/davidleitw/leetcodeBOT/model"
+	uuid "github.com/satori/go.uuid"
 )
 
 // return message template function in this file.
@@ -150,6 +151,70 @@ func SearchProblemsDetailMsg(problems []*model.Problem) *discordgo.MessageEmbed 
 
 	msg.Fields = fields
 	msg.Timestamp = time.Now().Format("2006-0102 15:04")
+	return msg
+}
+
+func SetStudyGroupStartTimeMessage(SID uuid.UUID, exist bool) *discordgo.MessageEmbed {
+	sg := model.GetStudyGroup(SID)
+	msg := baseEmbedMessage()
+	fields := []*discordgo.MessageEmbedField{}
+
+	if exist {
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "成功修改了下次讀書會的開始時間:",
+			Value:  "--------------------",
+			Inline: false,
+		})
+	} else {
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   "成功創建了一次新的讀書會，基本資訊如下:",
+			Value:  "--------------------",
+			Inline: false,
+		})
+	}
+
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "預計開始時間",
+		Value:  time.Time(sg.StartTime).Format("2006/01/02 15:04"),
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "目前參與人數",
+		Value:  fmt.Sprintf("%d人", sg.Attendance),
+		Inline: true,
+	})
+
+	msg.Fields = fields
+	return msg
+}
+
+func StudyGroupInfoMessage(sg *model.StudyGroup, cnt int64) *discordgo.MessageEmbed {
+	msg := baseEmbedMessage()
+	fields := []*discordgo.MessageEmbedField{}
+
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "下一次leetcode讀書會的資訊如下:",
+		Value:  "---------------------------",
+		Inline: false,
+	})
+
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "預計開始時間",
+		Value:  time.Time(sg.StartTime).Format("2006/01/02 15:04"),
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "目前參與人數",
+		Value:  fmt.Sprintf("%d人", sg.Attendance),
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "報告題目數",
+		Value:  fmt.Sprintf("%d題", cnt),
+		Inline: true,
+	})
+
+	msg.Fields = fields
 	return msg
 }
 

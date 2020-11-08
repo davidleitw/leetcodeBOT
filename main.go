@@ -102,8 +102,12 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 		case "rm", "del":
 		case "draw", "Draw", "抽":
 		case "next", "Next", "n":
-
-		case "study_group":
+			message, err := bot.GetNextStudyGroupInfo(msg.GuildID, cmd)
+			if err != nil {
+				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+				return
+			}
+			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
 		default:
 			_, _ = dis.ChannelMessageSend(msg.ChannelID, "message error, please check help message(--help, -h)")
 			return

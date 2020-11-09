@@ -13,6 +13,11 @@ func Add(msg *discordgo.MessageCreate, command []string) (*discordgo.MessageEmbe
 	if len(command) < 2 {
 		return nil, FORMAT_ERROR
 	}
+
+	if len(command) > 10 {
+		return nil, ADD_TOO_MANY_REPORTS
+	}
+
 	model.IsRecorded(msg.Author.ID, msg.Member.Nick)
 	// 記得update study group 參加人數
 	// get study group ID

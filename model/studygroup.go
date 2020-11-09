@@ -21,6 +21,20 @@ type StudyGroup struct {
 	StartTime  Time `gorm:"not null;"`
 }
 
+type ReportsResult struct {
+	ProblemID  int
+	Title      string
+	Difficulty int
+}
+
+func GetUserReports(SID uuid.UUID, UserID string) []ReportsResult {
+	var results []ReportsResult
+	DB.Table("problems").Select(
+		"problems.problem_id as problem_id, problems.problem_title as title, problems.difficulty as difficulty").Joins(
+		"left join reports on reports.problem_id = problems.problem_id where reports.user_id = ? and reports.s_id = ? order by reports.problem_id", UserID, SID).Scan(&results)
+	return results
+}
+
 func CreateNewReport(UserID string, ProblemID int, SID uuid.UUID) {
 	DB.Create(&Report{UserID: UserID, ProblemID: ProblemID, SID: SID})
 }

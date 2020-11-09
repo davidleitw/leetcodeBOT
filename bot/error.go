@@ -10,9 +10,14 @@ var (
 
 	ADD_REPORT_NUMBER_ERROR = errors.New("添加題目的時候請輸入數字。")
 	ADD_REPORT_REPEAT_ERROR = errors.New("請勿重複添加題目。")
+	ADD_TOO_MANY_REPORTS    = errors.New("請勿一次性添加超過五個題目。")
 
 	SET_TIME_FORMAT_ERROR = errors.New("時間格式錯誤， 請參考help的範例格式。")
 	SET_TIME_EARLY_ERROR  = errors.New("請輸入未來的一個時間點")
 
-	STUDYGROUP_NOT_FOUND_ERROR = errors.New("")
+	STUDYGROUP_NOT_FOUND_ERROR = errors.New("這個server還沒有舉辦過讀書會， 請先至少add一個題目讓bot建立新的讀書會。")
+
+	LIST_NO_DATA_ERROR = errors.New("找不到資料，請再次確認是否有預定要在這次讀書會報告。")
+
+	KIRITO_ERROR = errors.New("https://imgur.com/gallery/egb5S")
 )

@@ -55,7 +55,7 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 }
 
 func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
-	log.Println(msg.Author.ID, ": ", msg.Content)
+	log.Println(msg.Author.ID, "/", msg.Member.Nick, ": ", msg.Content)
 	log.Println("msg = ", msg.Content, ", len of msg is ", len(msg.Content))
 	if (msg.Author.ID == dis.State.User.ID) || msg.GuildID == "" || msg.Author.Bot || len(msg.Content) == 0 {
 		return
@@ -69,47 +69,67 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 	// 用戶暱稱
 	// fullID := msg.Author.Username + "#" + msg.Author.Discriminator
 	if strings.HasPrefix(msg.Content, "$") {
-		cmd := strings.Split(msg.Content, " ")[1:]
-		switch cmd[0] {
-		case "search":
-			message, err := bot.Search(cmd)
-			if err != nil {
-				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+		// cmd := strings.Split(msg.Content, " ")[1:]
+		command := strings.Split(msg.Content, " ")
+		if len(command) > 1 {
+			cmd := command[1:]
+			switch cmd[0] {
+			case "search":
+				message, err := bot.Search(cmd)
+				if err != nil {
+					_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+					return
+				}
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+				return
+			case "--help", "-h", "help":
+				help := bot.HelpMsg()
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
+				return
+			case "ls", "list", "List":
+				message, err := bot.List(msg, cmd)
+				if err != nil {
+					_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+					return
+				}
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+				return
+			case "add":
+				message, err := bot.Add(msg, cmd)
+				if err != nil {
+					_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+					return
+				}
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+				return
+			case "set", "Set", "SET":
+				message, err := bot.Set(msg.GuildID, cmd)
+				if err != nil {
+					_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+					return
+				}
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+			case "rm", "del":
+			case "draw", "Draw", "抽":
+			case "next", "Next", "n":
+				message, err := bot.GetNextStudyGroupInfo(msg.GuildID, cmd)
+				if err != nil {
+					_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+					return
+				}
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+				return
+			case "clear", "CLEAR", "Clear":
+			case "上車", "開車":
+				_, _ = dis.ChannelMessageSend(msg.ChannelID, "https://media1.tenor.com/images/1e00408e429e6e101b5193c74f136475/tenor.gif")
+			default:
+				help := bot.HelpMsg()
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
 				return
 			}
-			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
-
-		case "--help", "-h", "help":
+		} else {
 			help := bot.HelpMsg()
 			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
-
-		case "ls":
-		case "add":
-			message, err := bot.Add(msg, cmd)
-			if err != nil {
-				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
-				return
-			}
-			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
-
-		case "set":
-			message, err := bot.Set(msg.GuildID, cmd)
-			if err != nil {
-				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
-				return
-			}
-			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
-		case "rm", "del":
-		case "draw", "Draw", "抽":
-		case "next", "Next", "n":
-			message, err := bot.GetNextStudyGroupInfo(msg.GuildID, cmd)
-			if err != nil {
-				_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
-				return
-			}
-			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
-		default:
-			_, _ = dis.ChannelMessageSend(msg.ChannelID, "message error, please check help message(--help, -h)")
 			return
 		}
 	}

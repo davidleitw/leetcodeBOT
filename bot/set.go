@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"log"
 	"time"
 
 	"github.com/davidleitw/leetcodeBOT/model"
@@ -17,7 +16,6 @@ func Set(GuildID string, command []string) (*discordgo.MessageEmbed, error) {
 	}
 
 	startTime, err := time.ParseInLocation(TIME_LAYOUT, command[1]+" "+command[2], time.Local)
-	log.Println(startTime)
 	if err != nil {
 		return nil, SET_TIME_FORMAT_ERROR
 	}

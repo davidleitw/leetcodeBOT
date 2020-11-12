@@ -19,7 +19,7 @@ type Problem struct {
 	Accept       int
 }
 
-// err != nil 代表題目存在
+// return true mean problem exist
 func VerifyProblem(ProblemID int) bool {
 	err := DB.Where("problem_id = ?", ProblemID).First(&Problem{}).Error
 	return err == nil

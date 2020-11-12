@@ -10,35 +10,42 @@ import (
 )
 
 func Add(msg *discordgo.MessageCreate, command []string) (*discordgo.MessageEmbed, error) {
-	if len(command) < 2 {
+	length := len(command)
+
+	if length < 2 {
 		return nil, FORMAT_ERROR
 	}
 
-	if len(command) > 10 {
+	if length >= 5 {
 		return nil, ADD_TOO_MANY_REPORTS
 	}
 
-	model.IsRecorded(msg.Author.ID, msg.Member.Nick)
+	if msg.Member.Nick != "" {
+		model.IsRecorded(msg.Author.ID, msg.Member.Nick)
+	} else {
+		model.IsRecorded(msg.Author.ID, msg.Author.Username+"#"+msg.Author.Discriminator)
+	}
+
 	// 記得update study group 參加人數
 	// get study group ID
-	SID := model.VerifyStudyGroup(msg.GuildID)
+	sid := model.VerifyStudyGroup(msg.GuildID)
 
+	var failedCommand int = 0
 	var wg sync.WaitGroup
-	var cnt int = 0
-	wg.Add(len(command) - 1)
+	wg.Add(length - 1)
 
 	problemsID := make([]int, 0)
 
 	// 驗證每筆problem id 是否是整數而且是DB裡面有的題目
-	for idx := 1; idx < len(command); idx++ {
+	for idx := 1; idx < length; idx++ {
 		go func(idx int) {
 			defer wg.Done()
-			if id, ok := strconv.Atoi(command[idx]); ok == nil && model.VerifyProblem(id) {
-				if model.VerifyReport(msg.Author.ID, id, SID) {
-					problemsID = append(problemsID, id)
-					model.CreateNewReport(msg.Author.ID, id, SID)
+			if pid, ok := strconv.Atoi(command[idx]); ok == nil && model.VerifyProblem(pid) {
+				if model.VerifyReport(msg.Author.ID, pid, sid) {
+					problemsID = append(problemsID, pid)
+					model.CreateNewReport(msg.Author.ID, pid, sid)
 				} else {
-					cnt++
+					failedCommand++
 				}
 			}
 		}(idx)
@@ -46,7 +53,7 @@ func Add(msg *discordgo.MessageCreate, command []string) (*discordgo.MessageEmbe
 	wg.Wait()
 
 	// 表示所有題目都是已經添加過的題目
-	if cnt == len(command)-1 {
+	if failedCommand == length-1 {
 		return nil, ADD_REPORT_REPEAT_ERROR
 	}
 
@@ -57,13 +64,16 @@ func Add(msg *discordgo.MessageCreate, command []string) (*discordgo.MessageEmbe
 	sort.Ints(problemsID)
 	problems := make([]*model.Problem, 0)
 
-	for _, id := range problemsID {
-		problem, _ := model.SearchWithProblemID(id)
+	for _, pid := range problemsID {
+		problem, _ := model.SearchWithProblemID(pid)
 		problems = append(problems, problem)
 	}
 
-	month, day := model.UpdateSgAttendance(SID)
-	message := AddReportMessage(problems, msg.Member.Nick, month, day)
+	month, day := model.UpdateSgAttendance(sid)
 
-	return message, nil
+	if msg.Member.Nick != "" {
+		return AddReportMessage(problems, msg.Member.Nick, month, day), nil
+	} else {
+		return AddReportMessage(problems, msg.Author.Username+"#"+msg.Author.Discriminator+" ", month, day), nil
+	}
 }

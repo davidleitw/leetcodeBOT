@@ -27,6 +27,7 @@ type ReportsResult struct {
 	Difficulty int
 }
 
+// use user_id and s_id search user's reports
 func GetUserReports(SID uuid.UUID, UserID string) []ReportsResult {
 	var results []ReportsResult
 	DB.Table("problems").Select(
@@ -35,8 +36,20 @@ func GetUserReports(SID uuid.UUID, UserID string) []ReportsResult {
 	return results
 }
 
+func GetStudyGroupReports(SID uuid.UUID) []ReportsResult {
+	var results []ReportsResult
+	DB.Table("problems").Select(
+		"problems.problem_id as problem_id, problems.problem_title as title, problems.difficulty as difficulty").Joins(
+		"left join reports on reports.problem_id = problems.problem_id where reports.guild_id = ?", SID).Scan(&results)
+	return results
+}
+
 func CreateNewReport(UserID string, ProblemID int, SID uuid.UUID) {
 	DB.Create(&Report{UserID: UserID, ProblemID: ProblemID, SID: SID})
+}
+
+func DeleteReport(UserID string, ProblemID int, SID uuid.UUID) {
+	DB.Where("user_id = ? AND problem_id = ? AND s_id = ?", UserID, ProblemID, SID).Delete(&Report{})
 }
 
 func GetStudyGroupWithGID(GuildID string) (*StudyGroup, error) {
@@ -64,9 +77,7 @@ func CountStudyGroupProblems(SID uuid.UUID) int64 {
 
 // true => study group is exist
 func IsStudyGroupExist(GuildID string) bool {
-	var sg StudyGroup
-	err := DB.Where("guild_id = ? AND next_turn = ?", GuildID, true).First(&sg).Error
-
+	err := DB.Where("guild_id = ? AND next_turn = ?", GuildID, true).First(&StudyGroup{}).Error
 	return err != nil
 }
 
@@ -155,8 +166,8 @@ func VerifyStudyGroup(GuildID string) uuid.UUID {
 	return sg.SID
 }
 
+// 不存在指定的report return true
 func VerifyReport(UserID string, ProblemID int, SID uuid.UUID) bool {
 	err := DB.Where("user_id = ? AND problem_id = ? AND s_id = ?", UserID, ProblemID, SID).First(&Report{}).Error
-	// if err != nil 代表已經重複創立report
 	return err != nil
 }

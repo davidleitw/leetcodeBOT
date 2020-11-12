@@ -27,11 +27,11 @@ var footer *discordgo.MessageEmbedFooter = &discordgo.MessageEmbedFooter{
 func difficulty(d int) string {
 	switch d {
 	case 1:
-		return "eazy"
+		return "Eazy"
 	case 2:
-		return "medium"
+		return "Medium"
 	case 3:
-		return "hard"
+		return "Hard"
 	default:
 		return "Difficulty error"
 	}
@@ -45,150 +45,186 @@ func baseEmbedMessage() *discordgo.MessageEmbed {
 	}
 }
 
-func ListReportsMessage(reports []model.ReportsResult, nick string) *discordgo.MessageEmbed {
-	msg := baseEmbedMessage()
-	msg.Description = fmt.Sprintf("%s預計要報告的題目如下:\n", nick)
-	fields := []*discordgo.MessageEmbedField{}
-	fields = append(fields, &discordgo.MessageEmbedField{
+type fields []*discordgo.MessageEmbedField
+
+func baseField() fields {
+	return []*discordgo.MessageEmbedField{}
+}
+
+func (fs *fields) appendEmbedfield(field *discordgo.MessageEmbedField) {
+	*fs = append(*fs, field)
+}
+
+func (fs *fields) setProblemHeader() {
+	*fs = append(*fs, &discordgo.MessageEmbedField{
 		Name:   "Problem",
 		Value:  "----------",
 		Inline: true,
 	})
-	fields = append(fields, &discordgo.MessageEmbedField{
+	*fs = append(*fs, &discordgo.MessageEmbedField{
 		Name:   "Title: ",
 		Value:  "----------------------------",
 		Inline: true,
 	})
-	fields = append(fields, &discordgo.MessageEmbedField{
+	*fs = append(*fs, &discordgo.MessageEmbedField{
 		Name:   "Difficulty: ",
 		Value:  "----------",
 		Inline: true,
 	})
-	// "\u200b"
+}
+
+func (fs *fields) appendReport(report model.ReportsResult) {
+	*fs = append(*fs, &discordgo.MessageEmbedField{
+		Name:   fmt.Sprintf("No.%d\n", report.ProblemID),
+		Value:  "\u200b",
+		Inline: true,
+	})
+	*fs = append(*fs, &discordgo.MessageEmbedField{
+		Name:   report.Title,
+		Value:  "\u200b",
+		Inline: true,
+	})
+	*fs = append(*fs, &discordgo.MessageEmbedField{
+		Name:   difficulty(report.Difficulty),
+		Value:  "\u200b",
+		Inline: true,
+	})
+}
+
+func (fs *fields) appendProblem(problem *model.Problem) {
+	*fs = append(*fs, &discordgo.MessageEmbedField{
+		Name:   fmt.Sprintf("No.%d\n", problem.ProblemID),
+		Value:  "\u200b",
+		Inline: true,
+	})
+	*fs = append(*fs, &discordgo.MessageEmbedField{
+		Name:   problem.ProblemTitle,
+		Value:  "\u200b",
+		Inline: true,
+	})
+	*fs = append(*fs, &discordgo.MessageEmbedField{
+		Name:   difficulty(problem.Difficulty),
+		Value:  "\u200b",
+		Inline: true,
+	})
+}
+
+func ListReportsMessage(reports []model.ReportsResult, nick string) *discordgo.MessageEmbed {
+	msg := baseEmbedMessage()
+	msg.Description = fmt.Sprintf("%s預計要報告的題目如下:\n", nick)
+
+	fields := baseField()
+	fields.setProblemHeader()
+
 	for _, report := range reports {
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   fmt.Sprintf("No.%d\n", report.ProblemID),
-			Value:  "\u200b",
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   report.Title,
-			Value:  "\u200b",
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   difficulty(report.Difficulty),
-			Value:  "\u200b",
-			Inline: true,
-		})
+		fields.appendReport(report)
 	}
 	msg.Fields = fields
 	return msg
 }
 
-func AddReportMessage(problems []*model.Problem, nike string, month, day int) *discordgo.MessageEmbed {
+func AddReportMessage(problems []*model.Problem, nick string, month, day int) *discordgo.MessageEmbed {
 	msg := baseEmbedMessage()
-	fields := []*discordgo.MessageEmbedField{}
-	fields = append(fields, &discordgo.MessageEmbedField{
-		Name:   fmt.Sprintf("%s成功添加了以下題目:", nike),
+	msg.Description = fmt.Sprintf("%s成功添加了以下題目:", nick)
+	fields := baseField()
+	fields.setProblemHeader()
+
+	for _, problem := range problems {
+		fields.appendProblem(problem)
+	}
+
+	fields.appendEmbedfield(&discordgo.MessageEmbedField{
+		Name:   fmt.Sprintf("讀書會舉辦日期: %d月%d日", month, day),
 		Value:  "--------------------",
 		Inline: false,
 	})
+	msg.Fields = fields
+	return msg
+}
+
+func DeleteReportMessage(problems []*model.Problem, nick string) *discordgo.MessageEmbed {
+	msg := baseEmbedMessage()
+	msg.Description = fmt.Sprintf("%s 成功刪除了以下題目:", nick)
+	fields := baseField()
+	fields.setProblemHeader()
 
 	for _, problem := range problems {
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Problem",
-			Value:  fmt.Sprintf("No.%d\n", problem.ProblemID),
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Title: ",
-			Value:  problem.ProblemTitle,
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Difficulty: ",
-			Value:  difficulty(problem.Difficulty),
-			Inline: true,
-		})
+		fields.appendProblem(problem)
 	}
+
+	msg.Fields = fields
+	return msg
+}
+
+func ClearReportMessage() *discordgo.MessageEmbed {
+	msg := baseEmbedMessage()
+	msg.Description = fmt.Sprintf("a")
+	return msg
+}
+
+func SearchProblemsMsg(problem *model.Problem) *discordgo.MessageEmbed {
+	msg := baseEmbedMessage()
+	fields := baseField()
+
 	fields = append(fields, &discordgo.MessageEmbedField{
-		Name:   "--------------------",
-		Value:  fmt.Sprintf("讀書會舉辦日期: %d月%d日", month, day),
+		Name:   "Problem",
+		Value:  fmt.Sprintf("No.%d\n", problem.ProblemID),
 		Inline: false,
 	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "Title: ",
+		Value:  problem.ProblemTitle,
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "URL: ",
+		Value:  problem.ProblemURL,
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "Difficulty: ",
+		Value:  difficulty(problem.Difficulty),
+		Inline: true,
+	})
+
 	msg.Fields = fields
 	return msg
 }
 
-func SearchProblemsMsg(problems []*model.Problem) *discordgo.MessageEmbed {
+func SearchProblemsDetailMsg(problem *model.Problem) *discordgo.MessageEmbed {
 	msg := baseEmbedMessage()
-	fields := []*discordgo.MessageEmbedField{}
+	fields := baseField()
 
-	for _, problem := range problems {
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Problem",
-			Value:  fmt.Sprintf("No.%d\n", problem.ProblemID),
-			Inline: false,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Title: ",
-			Value:  problem.ProblemTitle,
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "URL: ",
-			Value:  problem.ProblemURL,
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Difficulty: ",
-			Value:  difficulty(problem.Difficulty),
-			Inline: true,
-		})
-	}
-
-	msg.Fields = fields
-	msg.Timestamp = time.Now().Format("2006-0102 15:04")
-	return msg
-}
-
-func SearchProblemsDetailMsg(problems []*model.Problem) *discordgo.MessageEmbed {
-	msg := baseEmbedMessage()
-	fields := []*discordgo.MessageEmbedField{}
-
-	for _, problem := range problems {
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Problem",
-			Value:  fmt.Sprintf("No.%d\n", problem.ProblemID),
-			Inline: false,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Title: ",
-			Value:  problem.ProblemTitle,
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "URL: ",
-			Value:  problem.ProblemURL,
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Difficulty: ",
-			Value:  difficulty(problem.Difficulty),
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Ac",
-			Value:  fmt.Sprintf("%d\n", problem.Accept),
-			Inline: true,
-		})
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   "Submit",
-			Value:  fmt.Sprintf("%d\n", problem.Submit),
-			Inline: true,
-		})
-	}
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "Problem",
+		Value:  fmt.Sprintf("No.%d\n", problem.ProblemID),
+		Inline: false,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "Title: ",
+		Value:  problem.ProblemTitle,
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "URL: ",
+		Value:  problem.ProblemURL,
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "Difficulty: ",
+		Value:  difficulty(problem.Difficulty),
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "Ac",
+		Value:  fmt.Sprintf("%d\n", problem.Accept),
+		Inline: true,
+	})
+	fields = append(fields, &discordgo.MessageEmbedField{
+		Name:   "Submit",
+		Value:  fmt.Sprintf("%d\n", problem.Submit),
+		Inline: true,
+	})
 
 	msg.Fields = fields
 	msg.Timestamp = time.Now().Format("2006-0102 15:04")
@@ -198,7 +234,7 @@ func SearchProblemsDetailMsg(problems []*model.Problem) *discordgo.MessageEmbed 
 func SetStudyGroupStartTimeMessage(SID uuid.UUID, exist bool) *discordgo.MessageEmbed {
 	sg := model.GetStudyGroup(SID)
 	msg := baseEmbedMessage()
-	fields := []*discordgo.MessageEmbedField{}
+	fields := baseField()
 
 	if exist {
 		fields = append(fields, &discordgo.MessageEmbedField{
@@ -229,9 +265,9 @@ func SetStudyGroupStartTimeMessage(SID uuid.UUID, exist bool) *discordgo.Message
 	return msg
 }
 
-func StudyGroupInfoMessage(sg *model.StudyGroup, cnt int64) *discordgo.MessageEmbed {
+func StudyGroupInfoMessage(sg *model.StudyGroup, cnt int64, reports []model.ReportsResult) *discordgo.MessageEmbed {
 	msg := baseEmbedMessage()
-	fields := []*discordgo.MessageEmbedField{}
+	fields := baseField()
 
 	fields = append(fields, &discordgo.MessageEmbedField{
 		Name:   "下一次leetcode讀書會的資訊如下:",

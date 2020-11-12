@@ -110,6 +110,13 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 				}
 				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
 			case "rm", "del":
+				message, err := bot.Remove(msg, cmd)
+				if err != nil {
+					_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+					return
+				}
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+				return
 			case "draw", "Draw", "抽":
 			case "next", "Next", "n":
 				message, err := bot.GetNextStudyGroupInfo(msg.GuildID, cmd)

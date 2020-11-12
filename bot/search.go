@@ -31,7 +31,7 @@ func Search(command []string) (*discordgo.MessageEmbed, error) {
 			return nil, SEARCH_NOT_FOUND_ERROR
 		}
 
-		msgs := SearchProblemsMsg([]*model.Problem{problem})
+		msgs := SearchProblemsMsg(problem)
 		return msgs, nil
 
 	} else if (command[1] == "-d" || command[1] == "--detail") && len(command) == 3 {
@@ -44,7 +44,7 @@ func Search(command []string) (*discordgo.MessageEmbed, error) {
 		if err != nil {
 			return nil, SEARCH_NOT_FOUND_ERROR
 		}
-		msgs := SearchProblemsDetailMsg([]*model.Problem{problem})
+		msgs := SearchProblemsDetailMsg(problem)
 		return msgs, nil
 	}
 

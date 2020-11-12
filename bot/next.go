@@ -13,5 +13,6 @@ func GetNextStudyGroupInfo(GuildID string, command []string) (*discordgo.Message
 	}
 
 	cnt := model.CountStudyGroupProblems(sg.SID)
-	return StudyGroupInfoMessage(sg, cnt), nil
+	reports := model.GetStudyGroupReports(sg.SID)
+	return StudyGroupInfoMessage(sg, cnt, reports), nil
 }

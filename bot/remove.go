@@ -16,7 +16,7 @@ func Remove(msg *discordgo.MessageCreate, command []string) (*discordgo.MessageE
 		return nil, FORMAT_ERROR
 	}
 
-	if length >= 5 {
+	if length >= 6 {
 		return nil, REMOVE_TOO_MANY_REPORTS
 	}
 

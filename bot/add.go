@@ -16,7 +16,7 @@ func Add(msg *discordgo.MessageCreate, command []string) (*discordgo.MessageEmbe
 		return nil, FORMAT_ERROR
 	}
 
-	if length >= 5 {
+	if length > 5 {
 		return nil, ADD_TOO_MANY_REPORTS
 	}
 

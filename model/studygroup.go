@@ -27,6 +27,12 @@ type ReportsResult struct {
 	Difficulty int
 }
 
+func DeleteUserReports(UserID, GuildID string) {
+	s_id := VerifyStudyGroup(GuildID)
+	DB.Where("user_id = ? AND s_id = ?", UserID, s_id).Delete(Report{})
+	UpdateSgAttendance(s_id)
+}
+
 // use user_id and s_id search user's reports
 func GetUserReports(SID uuid.UUID, UserID string) []ReportsResult {
 	var results []ReportsResult

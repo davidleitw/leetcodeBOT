@@ -295,7 +295,7 @@ func StudyGroupInfoMessage(sg *model.StudyGroup, cnt int64, reports []model.Repo
 	return msg
 }
 
-func HelpMsg() *discordgo.MessageEmbed {
+func HelpMessage() *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		Color:  color,
 		Author: author,
@@ -303,6 +303,19 @@ func HelpMsg() *discordgo.MessageEmbed {
 			&discordgo.MessageEmbedField{
 				Name:  "指令使用方法",
 				Value: "https://hackmd.io/5nBbJrxrTrGTO1WOraXtaQ",
+			},
+		},
+	}
+}
+
+func ClearMessage(username string) *discordgo.MessageEmbed {
+	return &discordgo.MessageEmbed{
+		Color:  color,
+		Author: author,
+		Fields: []*discordgo.MessageEmbedField{
+			&discordgo.MessageEmbedField{
+				Name:  fmt.Sprintf("已經成功把%s下次讀書會要報告的所有題目清空。", username),
+				Value: "\u200b",
 			},
 		},
 	}

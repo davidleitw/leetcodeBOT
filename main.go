@@ -83,7 +83,7 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
 				return
 			case "--help", "-h", "help":
-				help := bot.HelpMsg()
+				help := bot.HelpMessage()
 				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
 				return
 			case "ls", "list", "List":
@@ -127,15 +127,22 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
 				return
 			case "clear", "CLEAR", "Clear":
+				message, err := bot.Clear(msg, cmd)
+				if err != nil {
+					_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+					return
+				}
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+				return
 			case "上車", "開車":
 				_, _ = dis.ChannelMessageSend(msg.ChannelID, "https://media1.tenor.com/images/1e00408e429e6e101b5193c74f136475/tenor.gif")
 			default:
-				help := bot.HelpMsg()
+				help := bot.HelpMessage()
 				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
 				return
 			}
 		} else {
-			help := bot.HelpMsg()
+			help := bot.HelpMessage()
 			_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
 			return
 		}

@@ -291,6 +291,11 @@ func StudyGroupInfoMessage(sg *model.StudyGroup, cnt int64, reports []model.Repo
 		Inline: true,
 	})
 
+	fields.setProblemHeader()
+	for _, report := range reports {
+		fields.appendReport(report)
+	}
+
 	msg.Fields = fields
 	return msg
 }

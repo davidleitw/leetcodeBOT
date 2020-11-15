@@ -46,7 +46,7 @@ func GetStudyGroupReports(SID uuid.UUID) []ReportsResult {
 	var results []ReportsResult
 	DB.Table("problems").Select(
 		"problems.problem_id as problem_id, problems.problem_title as title, problems.difficulty as difficulty").Joins(
-		"left join reports on reports.problem_id = problems.problem_id where reports.guild_id = ?", SID).Scan(&results)
+		"left join reports on reports.problem_id = problems.problem_id where reports.s_id = ? order by reports.problem_id", SID).Scan(&results)
 	return results
 }
 

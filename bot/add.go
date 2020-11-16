@@ -20,12 +20,6 @@ func Add(msg *discordgo.MessageCreate, command []string) (*discordgo.MessageEmbe
 		return nil, ADD_TOO_MANY_REPORTS
 	}
 
-	if msg.Member.Nick != "" {
-		model.IsRecorded(msg.Author.ID, msg.Member.Nick)
-	} else {
-		model.IsRecorded(msg.Author.ID, msg.Author.Username+"#"+msg.Author.Discriminator)
-	}
-
 	// 記得update study group 參加人數
 	// get study group ID
 	sid := model.VerifyStudyGroup(msg.GuildID)

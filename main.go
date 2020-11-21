@@ -66,7 +66,7 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 		_, _ = dis.ChannelMessageSend(msg.ChannelID, "ㄐㄐ")
 		return
 	}
-	// 用戶暱稱
+
 	// fullID := msg.Author.Username + "#" + msg.Author.Discriminator
 	if strings.HasPrefix(msg.Content, "$") {
 		// cmd := strings.Split(msg.Content, " ")[1:]

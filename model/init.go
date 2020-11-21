@@ -19,6 +19,7 @@ func init() {
 		log.Println("DB connect error = ", err.Error())
 	}
 	DB = db
+	CreateLeetCodeProblemsTable()
 	migrate()
 }
 

@@ -7,6 +7,8 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
 	github.com/satori/go.uuid v1.2.0
+	gopkg.in/go-playground/assert.v1 v1.2.1
 	gorm.io/driver/mysql v1.0.3
+	gorm.io/driver/postgres v1.0.5
 	gorm.io/gorm v1.20.5
 )

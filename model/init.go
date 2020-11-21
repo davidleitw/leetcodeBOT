@@ -6,20 +6,28 @@ import (
 	"os"
 
 	_ "github.com/joho/godotenv/autoload"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
+func SetDB(db *gorm.DB) {
+	DB = db
+}
+
 func init() {
-	key := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?charset=utf8&parseTime=True&loc=Local", os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
-	db, err := gorm.Open(mysql.Open(key), &gorm.Config{})
+	//key := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?charset=utf8&parseTime=True&loc=Local", os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+	key := fmt.Sprintf("port=%s host=%s user=%s dbname=%s sslmode=disable password=%s", os.Getenv("DATABASE_PORT"),
+		os.Getenv("DATABASE_HOST"), os.Getenv("DATABASE_USER"), os.Getenv("DATABASE_NAME"), os.Getenv("DATABASE_PASSWORD"))
+	//db, err := gorm.Open(mysql.Open(key), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(key), &gorm.Config{})
 	if err != nil {
 		log.Println("DB connect error = ", err.Error())
 	}
-	DB = db
-	CreateLeetCodeProblemsTable()
+	//DB = db
+	SetDB(db)
+	//CreateLeetCodeProblemsTable()
 	migrate()
 }
 

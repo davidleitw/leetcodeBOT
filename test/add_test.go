@@ -7,11 +7,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var (
-	test_userID  string = "a001"
-	test_guildID string = "guild001"
-)
-
 func TestAdd(t *testing.T) {
 	tests := []struct {
 		msg     *discordgo.Message

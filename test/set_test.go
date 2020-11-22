@@ -80,7 +80,7 @@ func TestSet(t *testing.T) {
 					},
 					&discordgo.MessageEmbedField{
 						Name:   "目前參與人數",
-						Value:  fmt.Sprintf("%d人", 1),
+						Value:  fmt.Sprintf("%d人", 0),
 						Inline: true,
 					},
 				},

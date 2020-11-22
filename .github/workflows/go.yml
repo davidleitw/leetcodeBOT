@@ -40,8 +40,8 @@ jobs:
       run:  | 
         go test -v -cover test/search_test.go test/info.go
         go test -v -cover test/add_test.go test/info.go
-        go test -cover -v test/clear_test.go test/info.go 
-        
+        go test -v -cover test/clear_test.go test/info.go 
+        go test -v -cover test/set_test.go test/info.go
     - name: Discord notification
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}

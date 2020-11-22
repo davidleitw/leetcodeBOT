@@ -11,7 +11,7 @@ import (
 const TIME_LAYOUT = "2006-01-02 15:04"
 
 func Set(GuildID string, command []string) (*discordgo.MessageEmbed, error) {
-	if len(command) != 2 {
+	if len(command) > 2 {
 		return nil, FORMAT_ERROR
 	}
 

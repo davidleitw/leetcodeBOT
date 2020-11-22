@@ -22,7 +22,8 @@ func TestSet(t *testing.T) {
 			guildID: test_guildID,
 			command: []string{
 				"set",
-				"2021-03-08 14:29",
+				"2021-03-08",
+				"14:29",
 			},
 		},
 		{
@@ -39,7 +40,8 @@ func TestSet(t *testing.T) {
 			guildID: test_guildID,
 			command: []string{
 				"set",
-				"2021-03-46 13-28",
+				"2021-03-46",
+				"13-28",
 			},
 		},
 		{
@@ -47,7 +49,8 @@ func TestSet(t *testing.T) {
 			guildID: test_guildID,
 			command: []string{
 				"set",
-				"2009-03-08 19-24",
+				"2009-03-08",
+				"19-24",
 			},
 		},
 	}

@@ -8,6 +8,8 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/davidleitw/leetcodeBOT/model"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/davidleitw/leetcodeBOT/bot"
 	_ "github.com/joho/godotenv/autoload"
@@ -20,6 +22,7 @@ func init() {
 var disToken string
 
 func main() {
+	model.ConnectionDatabase()
 	if disToken == "" {
 		log.Println("No token provided. Please check your discord bot token.")
 		return

@@ -5,12 +5,14 @@ import (
 	"testing"
 
 	"github.com/davidleitw/leetcodeBOT/bot"
+	"github.com/davidleitw/leetcodeBOT/model"
 	"gopkg.in/go-playground/assert.v1"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 func TestClear(t *testing.T) {
+	model.SetDB(getTestDB())
 	tests := []struct {
 		msg     *discordgo.Message
 		command []string

@@ -53,6 +53,13 @@ func TestSet(t *testing.T) {
 				"19:24",
 			},
 		},
+		{
+			guildID: test_guildID,
+			command: []string{
+				"set",
+				"100",
+			},
+		},
 	}
 
 	results := []struct {
@@ -102,6 +109,10 @@ func TestSet(t *testing.T) {
 		{
 			message: nil,
 			err:     bot.SET_TIME_EARLY_ERROR,
+		},
+		{
+			message: nil,
+			err:     bot.FORMAT_ERROR,
 		},
 	}
 

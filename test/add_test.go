@@ -218,7 +218,6 @@ func TestAdd(t *testing.T) {
 	}
 
 	for index, test := range tests {
-
 		m, err := bot.Add(&discordgo.MessageCreate{
 			test.msg,
 		}, test.command)

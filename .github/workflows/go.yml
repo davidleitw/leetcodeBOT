@@ -57,31 +57,31 @@ jobs:
         args: '🚫 leetcodeBOT CI run failed. (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})'    
       if: failure()
 
-#   deploy:
-#     runs-on: ubuntu-latest
-#     needs: test
-#     if: github.ref == 'refs/heads/master' 
-#     steps:
-#       - uses: actions/checkout@v2
-#       - uses: akhileshns/heroku-deploy@v3.6.8 # This is the action
-#         with:
-#           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-#           heroku_app_name: ${{secrets.HEROKU_APP_NAME} #Must be unique in Heroku
-#           heroku_email: ${{secrets.HEROKU_EMAIL}
-#           usedocker: true
-#       - name: Discord notification
-#         env:
-#           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-#         uses: Ilshidur/action-discord@master
-#         with:
-#           args: '✅ leetcodeBOT CD run was successful (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})' 
-#       - name: Discord notification
-#         env:
-#           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-#         uses: Ilshidur/action-discord@master
-#         with:
-#           args: '🚫leetcodeBOT CD run failed. (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})'    
-#         if: failure()
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/master' 
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.6.8 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME} #Must be unique in Heroku
+          heroku_email: ${{secrets.HEROKU_EMAIL}
+          usedocker: true
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+          args: '✅ leetcodeBOT CD run was successful (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})' 
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+          args: '🚫leetcodeBOT CD run failed. (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})'    
+        if: failure()
 
 
 

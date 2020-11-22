@@ -9,6 +9,6 @@ COPY go.sum .
 RUN go mod download
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags "-s -w -extldflags '-static'" -o ./app
 
-FROM scratch  
+FROM alpine
 COPY --from=build_base /build/app /app
 ENTRYPOINT ["/app"]

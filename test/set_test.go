@@ -72,7 +72,7 @@ func TestSet(t *testing.T) {
 					},
 					&discordgo.MessageEmbedField{
 						Name:   "預計開始時間",
-						Value:  "2021-03-08 14:29",
+						Value:  "2021/03/08 14:29",
 						Inline: true,
 					},
 					&discordgo.MessageEmbedField{

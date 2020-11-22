@@ -11,7 +11,7 @@ import (
 
 func TestSearch(t *testing.T) {
 	model.SetDB(getTestDB())
-
+	model.CreateLeetCodeProblemsTable()
 	tests := []struct {
 		msg     *discordgo.Message
 		command []string

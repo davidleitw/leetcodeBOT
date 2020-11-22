@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	test_userID  string = "a001"
-	test_guildID string = "guild001"
+	test_userID   string = "a001"
+	test_guildID  string = "guild001"
+	test_userName string = "kirito"
 )
 
 func getTestDB() *gorm.DB {

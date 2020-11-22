@@ -6,7 +6,7 @@ import (
 )
 
 func Clear(msg *discordgo.MessageCreate, command []string) (*discordgo.MessageEmbed, error) {
-	if len(command) > 2 {
+	if len(command) >= 2 {
 		return nil, FORMAT_ERROR
 	}
 	model.DeleteUserReports(msg.Author.ID, msg.GuildID)

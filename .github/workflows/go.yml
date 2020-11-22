@@ -38,10 +38,6 @@ jobs:
 
     - name: UnitTest
       run:  | 
-<<<<<<< HEAD
-=======
-        cd test
->>>>>>> a700355ef0f61985b4466443d2bc6efd843cc9ba
         go test -v -cover test/search_test.go test/info.go
         go test -v -cover test/add_test.go test/info.go
         

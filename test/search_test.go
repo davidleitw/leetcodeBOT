@@ -5,12 +5,12 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/davidleitw/leetcodeBOT/bot"
+	"github.com/davidleitw/leetcodeBOT/model"
 	"gopkg.in/go-playground/assert.v1"
 )
 
 func TestSearch(t *testing.T) {
-	//db := getTestDB()
-	//model.SetDB(db)
+	model.SetDB(getTestDB())
 
 	tests := []struct {
 		msg     *discordgo.Message
@@ -105,7 +105,6 @@ func TestSearch(t *testing.T) {
 			err:     bot.KIRITO_ERROR,
 		},
 	}
-
 	for index, test := range tests {
 		m, err := bot.Search(test.command)
 		if m != nil && err == nil {

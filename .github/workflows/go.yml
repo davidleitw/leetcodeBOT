@@ -1,0 +1,87 @@
+name: Go
+
+on: [push, pull_request]
+
+jobs:
+
+  test:
+    name: BuildEnv
+    runs-on: ubuntu-18.04
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: leetcodeDB
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+    
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.13.0'
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: UnitTest
+      run:  | 
+        cd test
+        go test -v -cover test/search_test.go test/info.go
+        go test -v -cover test/add_test.go test/info.go
+        
+    - name: Discord notification
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      uses: Ilshidur/action-discord@master
+      with:
+        args: '✅ leetcodeBOT CI run was successful (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})'
+
+    - name: Discord notification
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      uses: Ilshidur/action-discord@master
+      with:
+        args: '🚫 leetcodeBOT CI run failed. (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})'    
+      if: failure()
+
+#   deploy:
+#     runs-on: ubuntu-latest
+#     needs: test
+#     if: github.ref == 'refs/heads/master' 
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: akhileshns/heroku-deploy@v3.6.8 # This is the action
+#         with:
+#           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+#           heroku_app_name: ${{secrets.HEROKU_APP_NAME} #Must be unique in Heroku
+#           heroku_email: ${{secrets.HEROKU_EMAIL}
+#           usedocker: true
+#       - name: Discord notification
+#         env:
+#           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+#         uses: Ilshidur/action-discord@master
+#         with:
+#           args: '✅ leetcodeBOT CD run was successful (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})' 
+#       - name: Discord notification
+#         env:
+#           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+#         uses: Ilshidur/action-discord@master
+#         with:
+#           args: '🚫leetcodeBOT CD run failed. (https://github.com/davidleitw/leetcodeBOT/commit/{{GITHUB_SHA}})'    
+#         if: failure()
+
+
+

@@ -2,9 +2,8 @@ package test
 
 import (
 	"fmt"
-	"os"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -14,7 +13,8 @@ var (
 )
 
 func getTestDB() *gorm.DB {
-	key := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?charset=utf8&parseTime=True&loc=Local", os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
-	db, _ := gorm.Open(mysql.Open(key), &gorm.Config{})
+	key := fmt.Sprintf("port=%s host=%s user=%s dbname=%s sslmode=disable password=%s", "5432",
+		"127.0.0.1", "postgres", "leetcodeDB", "postgres")
+	db, _ := gorm.Open(postgres.Open(key), &gorm.Config{})
 	return db
 }

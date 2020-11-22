@@ -69,7 +69,7 @@ func TestSet(t *testing.T) {
 				},
 				Fields: []*discordgo.MessageEmbedField{
 					&discordgo.MessageEmbedField{
-						Name:   "成功創建了一次新的讀書會，基本資訊如下:",
+						Name:   "成功修改了下次讀書會的開始時間:",
 						Value:  "--------------------",
 						Inline: false,
 					},

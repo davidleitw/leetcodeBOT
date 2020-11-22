@@ -55,8 +55,6 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 }
 
 func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
-	log.Println(msg.Author.ID, "/", msg.Member.Nick, ": ", msg.Content)
-	log.Println("msg = ", msg.Content, ", len of msg is ", len(msg.Content))
 	if (msg.Author.ID == dis.State.User.ID) || msg.GuildID == "" || msg.Author.Bot || len(msg.Content) == 0 {
 		return
 	}

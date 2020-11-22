@@ -31,7 +31,7 @@ func ConnectionDatabase() {
 	}
 
 	DB = db
-	//CreateLeetCodeProblemsTable()
+	CreateLeetCodeProblemsTable()
 	migrate()
 }
 

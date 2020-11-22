@@ -41,7 +41,7 @@ func TestSet(t *testing.T) {
 			command: []string{
 				"set",
 				"2021-03-46",
-				"13-28",
+				"13:28",
 			},
 		},
 		{
@@ -50,7 +50,7 @@ func TestSet(t *testing.T) {
 			command: []string{
 				"set",
 				"2009-03-08",
-				"19-24",
+				"19:24",
 			},
 		},
 	}
@@ -93,7 +93,7 @@ func TestSet(t *testing.T) {
 		},
 		{
 			message: nil,
-			err:     bot.FORMAT_ERROR,
+			err:     bot.SET_TIME_FORMAT_ERROR,
 		},
 		{
 			message: nil,

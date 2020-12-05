@@ -72,7 +72,8 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 	if strings.HasPrefix(msg.Content, "$") {
 		// cmd := strings.Split(msg.Content, " ")[1:]
 		command := strings.Split(msg.Content, " ")
-		if len(command) >= 1 {
+		log.Println("command = ", command)
+		if len(command) > 1 {
 			cmd := command[1:]
 			switch cmd[0] {
 			case "search":

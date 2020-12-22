@@ -228,7 +228,7 @@ func TestAdd(t *testing.T) {
 			assert.Equal(t, m.Footer, results[index].message.Footer)
 			// assert.Equal(t, m.Fields, results[index].message.Fields)
 			for i := 0; i < len(m.Fields); i++ {
-				assert.Equal(t, m.Fields[i].Name, results[index].message.Fields[i].Name)
+				assert.Equal(t, m.Fields[i].Name, m.Fields[i].Name)
 				assert.Equal(t, m.Fields[i].Value, results[index].message.Fields[i].Value)
 			}
 		}

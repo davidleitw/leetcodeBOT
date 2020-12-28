@@ -48,7 +48,7 @@ func main() {
 
 	fmt.Println("bot is now running.  Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)	
 	<-sc
 }
 
@@ -76,14 +76,14 @@ func messageHandler(dis *discordgo.Session, msg *discordgo.MessageCreate) {
 		if len(command) > 1 {
 			cmd := command[1:]
 			switch cmd[0] {
-			// case "search":
-			// 	message, err := bot.Search(cmd)
-			// 	if err != nil {
-			// 		_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
-			// 		return
-			// 	}
-			// 	_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
-			// 	return
+			case "search":
+				message, err := bot.Search(cmd)
+				if err != nil {
+					_, _ = dis.ChannelMessageSend(msg.ChannelID, err.Error())
+					return
+				}
+				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, message)
+				return
 			case "--help", "-h", "help":
 				help := bot.HelpMessage()
 				_, _ = dis.ChannelMessageSendEmbed(msg.ChannelID, help)
